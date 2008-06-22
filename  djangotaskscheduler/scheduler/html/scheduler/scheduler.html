@@ -1,0 +1,85 @@
+{% extends "admin/base_site.html" %}
+{% block title %}Scheduler | Hypersphere Admin{% endblock %}
+
+{% block extrahead %}
+<link rel="stylesheet" type="text/css" href="/media/css/forms.css" />
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+
+<form method="POST" action=".">
+
+<div class="submit-row">
+<h1 class="float-left">Scheduled tasks</h1>
+<input type="submit" value="Schedule task" name="_schedule" />
+<input type="submit" value="Refresh" name="_refresh" class="default" />
+</div>
+
+<fieldset class="module aligned ()">
+<div class="form-row" >
+    <div class="fieldrow">
+        <h2>Scheduled and running tasks</h2>
+        <table>
+        <COLGROUP width="8%">
+        <COLGROUP width="15%">
+        <COLGROUP width="10%">
+        <COLGROUP width="15%">
+        <COLGROUP width="10%">
+        <COLGROUP width="42%">
+        <tr>
+            <th>Instance</h2></th>
+            <th>Task</th>
+            <th>Owner</th>
+            <th>Scheduled date</th>
+            <th>Status</th>
+            <th>Status message</th>
+            <th> </th>
+        </h2>
+        {% for scheduled in scheduled_set %}
+            <tr><td><a href="/schedule/{{ scheduled.id }}">{{ scheduled.id }}</a></td>
+            <td>{{ scheduled.task.description }}</td>
+            <td>{{ scheduled.task.user }}</td>
+            <td>{{ scheduled.scheduled_dt }}</td>
+            <td>{{ scheduled.status_descr }}</td>
+            <td>{{ scheduled.message }}</td></tr>
+        {% endfor %}
+        </table>
+    </div>
+</div>
+</fieldset>
+<fieldset class="module aligned ()">
+<div class="form-row" >
+    <div class="fieldrow">
+    <h2>Completed tasks</h2>
+    <table>
+        <COLGROUP width="8%">
+        <COLGROUP width="15%">
+        <COLGROUP width="10%">
+        <COLGROUP width="15%">
+        <COLGROUP width="10%">
+        <COLGROUP width="7%">
+        <COLGROUP width="35%">
+        <tr><th>Instance</th>
+        <th>Task</th>
+        <th>Owner</th>
+        <th>Start date</th>
+        <th>Status</th>
+        <th>Files</th>
+        <th>Status message</th></tr></h2>
+        {% for completed in completed_set %}
+            <tr><td><a href="/schedule/{{ completed.id }}">{{ completed.id }}</a></td>
+            <td>{{ completed.task.description }}</td>
+            <td>{{ completed.task.user }}</td>
+            <td>{{ completed.start_dt }}</td>
+            <td>{{ completed.status_descr }}</td>
+            <td>{{ completed.numberFiles }}</td>
+            <td>{{ completed.message }}</td></tr>
+        {% endfor %}
+    </table>
+    </div>
+</div>
+</form>
+</fieldset>
+<br class="clear" />
+{% endblock %}

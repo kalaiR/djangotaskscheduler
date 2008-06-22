@@ -1,0 +1,30 @@
+{% extends "admin/base_site.html" %}
+{% block title %}Add scheduled task | Scheduler Admin{% endblock %}
+
+{% block extrahead %}
+<link rel="stylesheet" type="text/css" href="/media/css/forms.css" />
+{% endblock %}
+
+{% block content %}
+<div id="content" class="colM">
+<form method="POST" action=".">
+<div class="submit-row">
+<h1 class="float-left">Add scheduled task</h1>
+<input type="submit" value="&nbsp;&nbsp;Cancel&nbsp;&nbsp;" name="_cancel"/>
+<input type="submit" value="&nbsp;&nbsp;Save&nbsp;&nbsp;" name="_save" class="default"/>
+</div>
+<div id="content-main">
+<div>
+   <fieldset class="module aligned ()">
+        <h2>Task details</h2>
+        <div class="form-row" >
+            <label for="task" class="required">Task:</label>
+            {{ form.task }}
+        </div>
+    </fieldset>
+</div>
+</form>
+</div>
+<br class="clear" />
+</div>
+{% endblock %}

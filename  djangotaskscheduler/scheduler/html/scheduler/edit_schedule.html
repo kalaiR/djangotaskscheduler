@@ -1,0 +1,104 @@
+{% extends "admin/base_site.html" %}
+{% block title %}Scheduler - Edit Schedule{% endblock %}
+
+{% block extrahead %}
+<link rel="stylesheet" type="text/css" href="/media/css/forms.css" />
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+<form method="POST" action=".">
+
+<div class="submit-row">
+    <h1 class="float-left">Task details</h1>
+    <label for="action">Action: </label>{{ form.action }}
+    <input type="submit" value="&nbsp;&nbsp;Cancel&nbsp;&nbsp;" name="_cancel"/>
+    <input type="submit" value="&nbsp;&nbsp;Save&nbsp;&nbsp;" name="_save" class="default"/>
+</div>
+
+<div class="fieldrow">
+
+<fieldset class="module aligned ()">
+    <h2>Details for task: {{ schedule.id }} - {{ schedule.job.program }}</h2>
+    <div class="form-row" >
+        <label for="job_descr" class="required">Job name:</label>
+        {{ schedule.task.description }}
+    </div>
+    <div class="form-row" >
+        <label for="owner" class="required">Owner:</label>
+        {{ schedule.task.user.username }} ({{ schedule.task.user.first_name }} {{ schedule.job.user.last_name }})
+    </div>
+    <div class="form-row" >
+        <label for="status_descr" class="required">Status:</label>
+        {{ schedule.status_descr }}
+    </div>
+    <div class="form-row" >
+        <label for="message" class="required">Message:</label>
+        {{ schedule.message }}
+    </div>
+</fieldset>
+
+<fieldset class="module aligned ()">
+    <table>
+    <COLGROUP width="300px">
+    <COLGROUP width="650px">
+    <td>
+        <div>
+            <h2>Processing times</h2>
+            <div class="form-row" >
+            <label for="scheduled" class="required">Scheduled:</label>
+            {{ schedule.scheduled_dt }}
+            </div>
+            <div class="form-row" >
+            <label for="start" class="required">Actual start:</label>
+            {{ schedule.start_dt }}
+            </div>
+            <div class="form-row" >
+            <label for="end" class="required">Task end:</label>
+            {{ schedule.end_dt }}
+            </div>
+        </div>
+        <br>
+        <div>
+            <table>
+            <COLGROUP width="200px">
+            <COLGROUP width="100px">
+            <h2>Files</h2>
+            <tr>
+            <th>Filename</th>
+            <th>Filesize</th>
+            </tr>
+             {% for file in files %}
+                <tr><td>
+                {{ file.filename }}
+                </td><td>
+                {{ file.filesize }}
+                </td></tr>
+             {% endfor %}
+             </table>
+        </div>
+    </td>
+    <td>
+        <div>
+            <table>
+            <COLGROUP width="200px">
+            <COLGROUP width="450px">
+            <h2>Log</h2>
+            <tr>
+            <th>Date time</th>
+            <th>Message</th>
+            </tr>
+             {% for l in log %}
+                <tr><td>
+                {{ l.timestamp_dttm }}
+                </td><td>
+                {{ l.log }}
+                </td></tr>
+             {% endfor %}
+             </table>
+        </div>
+    </td>
+    </table>
+</fieldset>
+</form>
+{% endblock %}
