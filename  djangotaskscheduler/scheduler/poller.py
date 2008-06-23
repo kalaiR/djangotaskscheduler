@@ -8,6 +8,18 @@ from schedulerdemo.scheduler.models import Schedule
 from datetime import *
 import thread, os, time
 
+#   --------------------------------------------------------------------
+#   --- The following in necessary if you want to run this from CRON ---
+#   --------------------------------------------------------------------
+#
+#   PYTHONPATH=<path to schedulerdemo>/schedulerdemo
+#   DJANGO_SETTINGS_MODULE=docudeck
+#
+#   # m h  dom mon dow   command
+#     * *  *   *   *     cd <path to schedulerdemo>/schedulerdemo; ! /usr/bin/env python $
+#
+
+
 
 usage = "usage: %prog -r SECONDS| --repeat=SECONDS"
 parser = OptionParser(usage)
