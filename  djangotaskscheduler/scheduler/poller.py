@@ -7,6 +7,7 @@ from django.db import connection
 from schedulerdemo.scheduler.models import Schedule
 from datetime import *
 import thread, os, time
+from scheduler.scheduler_settings import PYTHON_APP
 
 #   --------------------------------------------------------------------
 #   --- The following in necessary if you want to run this from CRON ---

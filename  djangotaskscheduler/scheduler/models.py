@@ -186,9 +186,7 @@ class Schedule(models.Model):
 
     def numberFiles(self):
         "Return the number of files created for the scheduled task"
-        cursor = connection.cursor()
-        cursor.execute("SELECT COUNT(*) FROM scheduler_file WHERE SCHEDULE_ID = %s", [self.id])
-        return cursor.fetchone()[0]
+        return len(File.objects.filter(schedule = self))
 
 
     def runnow(self):
