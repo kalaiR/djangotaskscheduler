@@ -29,7 +29,7 @@ while end == False:
     else:
         for task in tasks:
             instance = task.id
-            python   = 'python '
+            python   = PYTHON_APP + ' '
             taskdescr = task.task.program
             program  = 'scheduler/tasks/' + taskdescr + '.py '
             args     =  '-i ' + str(instance)
