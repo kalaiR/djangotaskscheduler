@@ -5,6 +5,8 @@ from math import ceil
 from datetime import *
 import time
 import os
+from scheduler.scheduler_settings import *
+
 
 
 INTERVAL_TYPES = {
@@ -31,10 +33,7 @@ class Recurrence(models.Model):
 
 
     def next_runtime(self, start_dt):
-        cursor = connection.cursor()
-        cursor.execute("SELECT CURRENT_TIMESTAMP FROM DUAL")
-        now = cursor.fetchone()
-        current_dt = now[0]
+        current_dt = datetime.now()
 
         m = INTERVAL_TYPES[self.interval_type][1]
 
@@ -292,7 +291,7 @@ class File(models.Model):
 
 
     def createFile(self):
-        dir = '/var/scheduler/'+str(self.schedule_id)
+        dir = SCHEDULER_FILE_ROOT+'/'+str(self.schedule_id)
         try:
             os.makedirs(dir, 0777)
         except OSError:

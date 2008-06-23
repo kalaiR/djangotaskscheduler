@@ -4,6 +4,8 @@ import settings
 setup_environ(settings)
 from optparse import OptionParser
 from django.db import connection
+from schedulerdemo.scheduler.models import Schedule
+from datetime import *
 import thread, os, time
 
 
@@ -21,24 +23,17 @@ cursor = connection.cursor()
 end = False
 
 while end == False:
-    cursor.execute("SELECT s.id, t.program                                  \
-                    FROM scheduler_schedule s,                              \
-                         scheduler_task t                                    \
-                    WHERE s.scheduled_dt <= CURRENT_TIMESTAMP               \
-                    AND s.task_id = t.id                                     \
-                    AND s.status = 1")
-
-    job_set = cursor.fetchall()
-    if job_set == ():
-        print 'Nothing to do'
+    tasks = Schedule.objects.filter(status__exact=1, scheduled_dt__lte=datetime.now())
+    if len(tasks) == 0:
+        print datetime.now(), ': Nothing to do'
     else:
-        for job in job_set:
-            instance = job[0]
+        for task in tasks:
+            instance = task.id
             python   = 'python '
-            jobdescr = job[1]
-            program  = 'scheduler/tasks/' + jobdescr + '.py '
+            taskdescr = task.task.program
+            program  = 'scheduler/tasks/' + taskdescr + '.py '
             args     =  '-i ' + str(instance)
-            print 'Starting program', jobdescr, 'as instance', instance
+            print datetime.now(), ': Starting program', taskdescr, 'as instance', instance
             thread.start_new_thread(os.system,(python+program+args,))
 
     if options.repeat == None:
