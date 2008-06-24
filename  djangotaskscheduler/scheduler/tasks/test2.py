@@ -37,6 +37,7 @@ try:
         #time.sleep(1)
         f1.write(str(a)+"\n")
         thistask.add_log_message('progress '+str(a))
+        print 'progress '+str(a)
         s += a
     thistask.add_log_message('ended '+str(s))
     thistask.set_message('Completed')

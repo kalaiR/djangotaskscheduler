@@ -9,6 +9,7 @@ from datetime import *
 import thread, os, time
 from scheduler.scheduler_settings import PYTHON_APP
 
+
 #   --------------------------------------------------------------------
 #   --- The following in necessary if you want to run this from CRON ---
 #   --------------------------------------------------------------------
@@ -19,7 +20,6 @@ from scheduler.scheduler_settings import PYTHON_APP
 #   # m h  dom mon dow   command
 #     * *  *   *   *     cd <path to schedulerdemo>/schedulerdemo; ! /usr/bin/env python $
 #
-
 
 
 usage = "usage: %prog -r SECONDS| --repeat=SECONDS"
@@ -41,12 +41,13 @@ while end == False:
         print datetime.now(), ': Nothing to do'
     else:
         for task in tasks:
-            instance = task.id
-            python   = PYTHON_APP + ' '
-            taskdescr = task.task.program
-            program  = 'scheduler/tasks/' + taskdescr + '.py '
-            args     =  '-i ' + str(instance)
-            print datetime.now(), ': Starting program', taskdescr, 'as instance', instance
+            thistask    = Schedule(pk = task.id)
+            python      = PYTHON_APP + ' '
+            taskdescr   = task.task.program
+            program     = 'scheduler/tasks/' + taskdescr + '.py '
+            stdoutfile  = thistask.createFile('stdout.txt')
+            args        =  '-i ' + str(task.id) + ' > ' + stdoutfile
+            print datetime.now(), ': Starting program', taskdescr, 'as instance', task.id
             thread.start_new_thread(os.system,(python+program+args,))
 
     if options.repeat == None:

@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import *
 
-urlpatterns = patterns('',
-    (r'^scheduler/$', 'schedulerdemo.scheduler.views.show_scheduler'),
-    (r'^schedule/(?P<schedule_id>\d+)/$', 'schedulerdemo.scheduler.views.show_scheduler'),
+urlpatterns = patterns('schedulerdemo.scheduler.views',
+    (r'^$', 'show_scheduler'),
+    (r'^detail/(?P<schedule_id>\d+)/$', 'edit_schedule'),
+    (r'^create/$', 'add_schedule'),
 )

@@ -124,6 +124,7 @@ class Schedule(models.Model):
             s.end_dt = datetime.now()
             s.save()
             s.add_log_message("Task failed.")
+            self.closeFile('stdout.txt')
         except self.DoesNotExist:
             print "Unable to mark task with instance",self.id,"as failed"
 
@@ -136,6 +137,7 @@ class Schedule(models.Model):
             s.end_dt = datetime.now()
             s.save()
             s.add_log_message("Task ended successfully.")
+            self.closeFile('stdout.txt')
             # If recurring task, reschedule
             t = Task.objects.get(id = s.task_id)
             r = Recurrence.objects.get(id = t.recurrence_id)
@@ -179,9 +181,12 @@ class Schedule(models.Model):
 
     def closeFile(self, filename):
         "Close the attached file."
-        f = File.objects.get(schedule = self, filename = filename[filename.rfind('/')+1:])
-        f.closeFile()
-        self.add_log_message("File closed: "+filename)
+        try:
+            f = File.objects.get(schedule = self, filename = filename[filename.rfind('/')+1:])
+            f.closeFile()
+            self.add_log_message("File closed: "+filename)
+        except File.DoesNotExist:
+            a = 1
 
 
     def numberFiles(self):
@@ -252,13 +257,14 @@ class Schedule(models.Model):
             s = Schedule.objects.get(id = self.id, status__in = (3,4,5))
             files = File.objects.filter(schedule = s)
             for f in files:
-                file = f.file()
-                print 'remove file:', file
-                #os.remove(file)
-                #os.rmdir()
+                os.remove(f.file())
+            os.rmdir(f.path())
             super(Schedule, s).delete()
+            Log.objects.filter(schedule = self).delete()
+            File.objects.filter(schedule = self).delete()
         except self.DoesNotExist:
-            print "Unable to delete the task for instance",self.id
+            print "Unable to delete the task for instance", self.id
+
 
 
     def __unicode__(self):
@@ -287,13 +293,16 @@ class File(models.Model):
     def file(self):
         return os.path.join(self.filepath, self.filename)
 
+    def path(self):
+        return self.filepath
 
     def createFile(self):
         dir = SCHEDULER_FILE_ROOT+'/'+str(self.schedule_id)
         try:
             os.makedirs(dir, 0777)
         except OSError:
-            print 'Directory exists. ('+ dir +')'
+            #print 'Directory exists. ('+ dir +')'
+            a = 1
         self.filepath = dir
         self.save()
         return self.file()

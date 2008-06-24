@@ -70,9 +70,13 @@
             </tr>
              {% for file in files %}
                 <tr><td>
-                {{ file.filename }}
+                {% if filedownload %}
+                    <a href="{{ file.1 }}">{{ file.0.filename }}</a>
+                {% else %}
+                    {{ file.0.filename }}
+                {% endif %}
                 </td><td>
-                {{ file.filesize }}
+                {{ file.0.filesize }}
                 </td></tr>
              {% endfor %}
              </table>

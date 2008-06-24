@@ -1,5 +1,5 @@
 {% extends "admin/base_site.html" %}
-{% block title %}Scheduler | Hypersphere Admin{% endblock %}
+{% block title %}Scheduler | Scheduler Admin{% endblock %}
 
 {% block extrahead %}
 <link rel="stylesheet" type="text/css" href="/media/css/forms.css" />
@@ -37,7 +37,7 @@
             <th> </th>
         </h2>
         {% for scheduled in scheduled_set %}
-            <tr><td><a href="/schedule/{{ scheduled.id }}">{{ scheduled.id }}</a></td>
+            <tr><td><a href="/scheduler/detail/{{ scheduled.id }}">{{ scheduled.id }}</a></td>
             <td>{{ scheduled.task.description }}</td>
             <td>{{ scheduled.task.user }}</td>
             <td>{{ scheduled.scheduled_dt }}</td>
@@ -68,7 +68,7 @@
         <th>Files</th>
         <th>Status message</th></tr></h2>
         {% for completed in completed_set %}
-            <tr><td><a href="/schedule/{{ completed.id }}">{{ completed.id }}</a></td>
+            <tr><td><a href="/scheduler/detail/{{ completed.id }}">{{ completed.id }}</a></td>
             <td>{{ completed.task.description }}</td>
             <td>{{ completed.task.user }}</td>
             <td>{{ completed.start_dt }}</td>

@@ -1,4 +1,5 @@
 from schedulerdemo.scheduler.models import *
+from scheduler.scheduler_settings import SCHEDULER_FILE_WEBROOT, SCHEDULER_FILE_DOWNLOADS
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader, Context
 from django import newforms as forms
@@ -15,7 +16,7 @@ def add_schedule(request):
 
    # --- Cancel
     if request.POST.getlist('_cancel'):
-        return HttpResponseRedirect("/admin/scheduler")
+        return HttpResponseRedirect("/scheduler")
 
     # --- Save
     if request.POST.getlist('_save'):
@@ -23,7 +24,7 @@ def add_schedule(request):
         if tid <> 0:
             newtask = Schedule(task_id = tid).create()
 
-        return HttpResponseRedirect("/admin/scheduler")
+        return HttpResponseRedirect("/scheduler")
 
     # --- Build the page
     tl = Task.objects.filter().order_by('description')
@@ -48,7 +49,7 @@ def add_schedule(request):
 def show_scheduler(request):
 
     if request.POST.getlist('_schedule'):
-        return HttpResponseRedirect("/schedule/add")
+        return HttpResponseRedirect("/scheduler/create")
 
     scheduled_set = Schedule.objects.filter(status__in=(1,2)).order_by('-scheduled_dt')
     completed_set = Schedule.objects.filter(status__in=(3,4,5)).order_by('-start_dt')[0:15]
@@ -79,10 +80,11 @@ class EditScheduleForm(forms.Form):
 def edit_schedule(request, schedule_id):
 
     schedule = Schedule.objects.get(pk = schedule_id)
+    schedule.closeFile('stdout.txt')
 
     # --- Cancel
     if request.POST.getlist('_cancel'):
-        return HttpResponseRedirect("/admin/scheduler")
+        return HttpResponseRedirect("/scheduler")
 
     # --- Save
     if request.POST.getlist('_save'):
@@ -96,13 +98,20 @@ def edit_schedule(request, schedule_id):
             thistask.cancel()
         elif action == 4: # Delete
             thistask.delete()
-        return HttpResponseRedirect("/admin/scheduler")
+        return HttpResponseRedirect("/scheduler")
 
     # Setup form
     form = EditScheduleForm()
 
     # Get file data
     files = File.objects.filter(schedule = schedule_id).order_by('id')
+
+    files2 = []
+    for f in files:
+        f2 = []
+        f2.append(f)
+        f2.append(SCHEDULER_FILE_WEBROOT+f.file())
+        files2.append(f2)
 
     # Get log
     log = Log.objects.filter(schedule = schedule_id).order_by('id')
@@ -111,7 +120,8 @@ def edit_schedule(request, schedule_id):
     t = loader.get_template('scheduler/edit_schedule.html')
     c = Context({'schedule': schedule,
                  'form': form,
-                 'files': files,
+                 'files': files2,
+                 'filedownload': SCHEDULER_FILE_DOWNLOADS,
                  'log': log,
                 })
 
