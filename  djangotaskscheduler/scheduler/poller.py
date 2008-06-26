@@ -15,7 +15,7 @@ from scheduler.scheduler_settings import PYTHON_APP
 #   --------------------------------------------------------------------
 #
 #   PYTHONPATH=<path to schedulerdemo>/schedulerdemo
-#   DJANGO_SETTINGS_MODULE=docudeck
+#   DJANGO_SETTINGS_MODULE=schedulerdemo
 #
 #   # m h  dom mon dow   command
 #     * *  *   *   *     cd <path to schedulerdemo>/schedulerdemo; ! /usr/bin/env python $

@@ -106,33 +106,29 @@ class Schedule(models.Model):
 
     def start_task(self):
         "Show the current running task as started"
-        try:
-            s = Schedule.objects.get(id = self.id, status = 1)
+        schedules = Schedule.objects.filter(id = self.id, status = 1)
+        for s in schedules:
             s.status = 2
             s.start_dt = datetime.now()
             s.save()
             s.add_log_message("Task start.")
-        except self.DoesNotExist:
-            print "Unable to mark task with instance",self.id,"as started"
 
 
     def failed_task(self):
         "Mark the current running task as failed"
-        try:
-            s = Schedule.objects.get(id = self.id, status = 2)
+        schedules = Schedule.objects.filter(id = self.id, status = 2)
+        for s in schedules:
             s.status = 3
             s.end_dt = datetime.now()
             s.save()
             s.add_log_message("Task failed.")
             self.closeFile('stdout.txt')
-        except self.DoesNotExist:
-            print "Unable to mark task with instance",self.id,"as failed"
 
 
     def end_task(self):
         "Finish up the current running task"
-        try:
-            s = Schedule.objects.get(id = self.id, status = 2)
+        schedules = Schedule.objects.filter(id = self.id, status = 2)
+        for s in schedules:
             s.status = 4
             s.end_dt = datetime.now()
             s.save()
@@ -145,30 +141,25 @@ class Schedule(models.Model):
                 new_datetime = r.next_runtime(s.scheduled_dt)
                 newtask = Schedule(task_id = s.task_id, scheduled_dt = new_datetime, status = 1)
                 newtask.save()
-        except s.DoesNotExist:
+        else:
             print "Unable to mark task with instance",self.id,"as ended"
 
 
     def set_message(self, message):
         "Set a message for the current running task"
-        try:
-            s = Schedule.objects.get(id = self.id, status = 2)
+        schedules = Schedule.objects.filter(id = self.id, status = 2)
+        for s in schedules:
             s.message = message
             s.save()
-        except self.DoesNotExist:
-            print "Unable to set message for instance",self.id
 
 
     def add_log_message(self, message):
         "Add a message to this tasks log."
-        try:
-            l = Log.objects.create(schedule = self,
+        l = Log.objects.create(schedule = self,
                                     log = message,
                                     timestamp_dttm = datetime.now()
                                     )
-            l.save()
-        except self.DoesNotExist:
-            print "Unable to set a message to the log for instance",self.id
+        l.save()
 
 
     def createFile(self, filename):
@@ -181,12 +172,10 @@ class Schedule(models.Model):
 
     def closeFile(self, filename):
         "Close the attached file."
-        try:
-            f = File.objects.get(schedule = self, filename = filename[filename.rfind('/')+1:])
+        files = File.objects.filter(schedule = self, filename = filename[filename.rfind('/')+1:])
+        for f in files:
             f.closeFile()
             self.add_log_message("File closed: "+filename)
-        except File.DoesNotExist:
-            a = 1
 
 
     def numberFiles(self):
@@ -198,12 +187,10 @@ class Schedule(models.Model):
         "Set the run time for start when the scheduler awakes.  \
          Please note that the status of the task instance must  \
          be 'queued'. "
-        try:
-            s = Schedule.objects.get(id = self.id, status = 1)
+        schedules = Schedule.objects.filter(id = self.id, status = 1)
+        for s in schedules:
             s.scheduled_dt = datetime.now()
             s.save()
-        except self.DoesNotExist:
-            print "Unable to update the scheduled date for instance",self.id
 
 
     def reschedule(self):
@@ -211,8 +198,8 @@ class Schedule(models.Model):
          to rerun this program after it had failed.             \
          Please note that the status of the task instance must  \
          be 'failed', 'completed' or 'cancelled'. "
-        try:
-            s = Schedule.objects.get(id = self.id, status__in = (3,4,5))
+        schedules = Schedule.objects.filter(id = self.id, status__in = (3,4,5))
+        for s in schedules:
             t = Task.objects.get(id = s.task_id)
             r = Recurrence.objects.get(id = t.recurrence_id)
             if r.interval_type <> 0:
@@ -222,18 +209,15 @@ class Schedule(models.Model):
             else:
                 newtask = Schedule(task_id = s.task_id, scheduled_dt = datetime.now(), status = 1)
                 newtask.save()
-        except self.DoesNotExist:
-            print "Unable to update the scheduled date for instance",self.id
 
 
     def create(self):
         "Schedule a new task identified by the provided task_id."
-        try:
-            t = Task.objects.get(pk = self.task_id)
+        tasks = Task.objects.filter(pk = self.task_id)
+        for t in tasks:
             self.scheduled_dt = t.start_datetime
             self.save()
-        except self.DoesNotExist:
-            print 'Unable to schedule a new task.'
+
 
     def cancel(self):
         "Cancel this task that was scheduled.                       \
@@ -241,30 +225,26 @@ class Schedule(models.Model):
          be 'scheduled' or 'processing'. Note that this does cancel \
          the task from the scheduler tables, however, it does not   \
          cancel the actual program running. "
-        try:
-            s = Schedule.objects.get(id = self.id, status__in = (1,2))
+        schedules = Schedule.objects.filter(id = self.id, status__in = (1,2))
+        for s in schedules:
             s.status = 5
             s.start_dt = datetime.now()
             s.save()
-        except self.DoesNotExist:
-            print "Unable to cancel the scheduled task for instance",self.id
 
 
     def delete(self):
         "Delete this task and its related files.                \
          the task must be 'failed', 'cancelled', or 'completed'."
-        try:
-            s = Schedule.objects.get(id = self.id, status__in = (3,4,5))
+        schedules = Schedule.objects.filter(id = self.id, status__in = (3,4,5))
+        for s in schedules:
             files = File.objects.filter(schedule = s)
-            for f in files:
-                os.remove(f.file())
-            os.rmdir(f.path())
+            if len(files) > 0:
+                for f in files:
+                    os.remove(f.file())
+                os.rmdir(files[0].path())
             super(Schedule, s).delete()
             Log.objects.filter(schedule = self).delete()
             File.objects.filter(schedule = self).delete()
-        except self.DoesNotExist:
-            print "Unable to delete the task for instance", self.id
-
 
 
     def __unicode__(self):
@@ -300,12 +280,12 @@ class File(models.Model):
         dir = SCHEDULER_FILE_ROOT+'/'+str(self.schedule_id)
         try:
             os.makedirs(dir, 0777)
+            self.filepath = dir
+            self.save()
+            return self.file()
         except OSError:
-            #print 'Directory exists. ('+ dir +')'
-            a = 1
-        self.filepath = dir
-        self.save()
-        return self.file()
+            pass
+        return '/dev/null'
 
 
     def closeFile(self):

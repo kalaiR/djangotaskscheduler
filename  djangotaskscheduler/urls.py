@@ -9,8 +9,6 @@ urlpatterns = patterns('',
     (r'^admin/', include('django.contrib.admin.urls')),
 
     # Necessary for Django Task Scheduler
-    (r'^schedule/add/', 'schedulerdemo.scheduler.views.add_schedule'),
-    (r'^schedule/(?P<schedule_id>\d+)/$', 'schedulerdemo.scheduler.views.edit_schedule'),
-    (r'^admin/', include('schedulerdemo.scheduler.urls')),
-
+    (r'^scheduler/', include('schedulerdemo.scheduler.urls')),
+    
 )

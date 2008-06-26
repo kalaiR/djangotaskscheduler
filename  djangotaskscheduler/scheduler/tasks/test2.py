@@ -52,6 +52,6 @@ try:
 
 except:
     thistask = Schedule(id = options.instance_id)
-    thistask.failed_job()
+    thistask.failed_task()
 
 thistask.end_task()

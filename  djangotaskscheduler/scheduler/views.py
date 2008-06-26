@@ -35,7 +35,7 @@ def add_schedule(request):
         tasklst.append(ti)
 
     form = NewScheduleForm()
-    form.base_fields['task'].choices = tasklst
+    form.fields['task'].choices = tasklst
 
     # Setup template and context
     t = loader.get_template('scheduler/add_schedule.html')
