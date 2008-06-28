@@ -1,4 +1,4 @@
-from schedulerdemo.scheduler.models import *
+from scheduler.models import *
 from scheduler.scheduler_settings import SCHEDULER_FILE_WEBROOT, SCHEDULER_FILE_DOWNLOADS
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader, Context

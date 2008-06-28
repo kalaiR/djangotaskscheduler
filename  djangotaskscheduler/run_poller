@@ -1,3 +1,3 @@
-export PYTHONPATH=/home/marcel/workspace/schedulerdemo
-export DJANGO_SETTINGS_MODULE=schedulerdemo
+export PYTHONPATH=/home/marcel/Django-Projects/djangotaskscheduler
+export DJANGO_SETTINGS_MODULE=djangotaskscheduler
 python scheduler/poller.py -r 15 

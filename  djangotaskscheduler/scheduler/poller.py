@@ -4,7 +4,7 @@ import settings
 setup_environ(settings)
 from optparse import OptionParser
 from django.db import connection
-from schedulerdemo.scheduler.models import Schedule
+from scheduler.models import Schedule
 from datetime import *
 import thread, os, time
 from scheduler.scheduler_settings import PYTHON_APP
