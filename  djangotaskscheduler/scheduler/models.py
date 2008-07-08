@@ -58,11 +58,10 @@ class Recurrence(models.Model):
         return self.description
 
 
-    class Admin:
-        list_display = (['description'])
-        list_filter = (['description'])
-        pass
-
+    #class Admin:
+    #    list_display = (['description'])
+    #    list_filter = (['description'])
+    #    pass
 
 
 class Task(models.Model):
@@ -78,15 +77,15 @@ class Task(models.Model):
         return "Task: " + str(self.id)
 
 
-    class Admin:
-        list_display = ('description',
-                        'user',
-                        'program',
-                        'longdescription',
-                        'recurrence',)
-        list_filter = ('description',
-                       'user')
-        pass
+    #class Admin:
+    #    list_display = ('description',
+    #                    'user',
+    #                    'program',
+    #                    'longdescription',
+    #                    'recurrence',)
+    #    list_filter = ('description',
+    #                   'user')
+    #    pass
 
 
 
@@ -295,3 +294,25 @@ class File(models.Model):
 
     def __unicode__(self):
         return "File: " + str(self.id)
+
+
+
+# --- Newforms Admin Section
+from django.contrib import admin
+
+
+class RecurrenceAdmin(admin.ModelAdmin):
+    list_display = ('description',)
+    list_filter = ('description',)
+    ordering = ('description',)
+    
+
+class TaskAdmin(admin.ModelAdmin):
+    list_display = ('description', 'user', 'program', 'longdescription', 'recurrence',)
+    list_filter = ('description', 'user',)
+    ordering = ('description',)
+
+
+admin.site.register(Recurrence, RecurrenceAdmin)
+admin.site.register(Task, TaskAdmin)
+
